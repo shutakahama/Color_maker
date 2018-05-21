@@ -2,13 +2,13 @@
 #include<Servo.h>
 #include "Adafruit_TCS34725.h"
 
-#define button1 2
-#define button2 3
-#define button3 4
+#define button1 7
+#define button2 8
+#define button3 9
 
-#define redpin 9
-#define greenpin 10
-#define bluepin 11
+#define redpin 3
+#define greenpin 5
+#define bluepin 6
 
 #define commonAnode false
 byte gammatable[256];
@@ -44,10 +44,10 @@ void setup() {
   pinMode(greenpin, OUTPUT);
   pinMode(bluepin, OUTPUT);
 
-  Servocyan.attach(5);
-  Servomagenta.attach(6);
-  Servoyellow.attach(7);
-  Servoblack.attach(8);
+  Servocyan.attach(10);
+  Servomagenta.attach(11);
+  Servoyellow.attach(12);
+  Servoblack.attach(13);
   
   //フルカラーLED用LUTの作成（ガンマ補正）
   for (int i=0; i<256; i++){
@@ -179,7 +179,7 @@ void loop() {
     
     Servoblack.write(160);
     if(k !=0) delay(100);
-    delay(k*10);
+    delay(k*10);//インクの濃さに応じて割合は調整する
     Servoblack.write(0);
     
     State = 0; //State=0に戻る
