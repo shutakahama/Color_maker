@@ -8,3 +8,5 @@ ArduinoIDE(Arduino Uno R3) color_sensor.ino
 
 Processing colordraw.pde
 センサで読み取った色でディスプレイ上に線を引くことができます．
+
+![_20180111_201038](https://user-images.githubusercontent.com/32294580/60396913-44924080-9b82-11e9-94a2-3924785c9a13.JPG)
