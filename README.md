@@ -1,5 +1,10 @@
 # zisyupro
 
-機械情報工学科　自主プロジェクト「あなたの一番好きな色」で制作したファイルです。  
-ArduinoIDE(Arduino Uno R3) color_sensor.ino  
-Processing colordraw.pde  
+機械情報工学科　自主プロジェクト「あなたの一番好きな色」で制作したファイルです。
+環境中の色をセンサで読み取り，色の割合を自動で調整してCMYK原色の絵の具を混ぜ合わせることで再現して実際に出力します．
+
+ArduinoIDE(Arduino Uno R3) color_sensor.ino
+センサから入力された値を絵の具を混ぜ合わせる割合に変更します．
+
+Processing colordraw.pde
+センサで読み取った色でディスプレイ上に線を引くことができます．
