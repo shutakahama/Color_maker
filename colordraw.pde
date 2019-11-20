@@ -32,21 +32,28 @@ void draw(){
 void serialEvent(Serial myPort){
   String received = myPort.readStringUntil('\n');
   println(received);
-  
+
   if(received != null){
-    received = trim(received); //改行コードなどを除く
-    int sensorColor[] = int(split(received, ',')); //カンマの区切りごとに配列に格納
-    if(sensorColor.length == 3){ //各値に格納
+    //改行コードなどを除く
+    received = trim(received); 
+    //カンマの区切りごとに配列に格納
+    int sensorColor[] = int(split(received, ',')); 
+
+    if(sensorColor.length == 3){
+      //各値に格納
       int red = sensorColor[0];
       int green = sensorColor[1];
       int blue = sensorColor[2];
-      
-      colorMode(RGB, 255, 255, 255, 255); //カラーモードRGBでmycolorに格納
+
+      //カラーモードRGBでmycolorに格納
+      colorMode(RGB, 255, 255, 255, 255);
       myColor = color(red, green, blue);
-      
-      colorMode(HSB, 1.0, 1.0, 1.0, 1.0); //カラーモードHSBで変換
+
+      //カラーモードHSBで変換
+      colorMode(HSB, 1.0, 1.0, 1.0, 1.0); 
       myColor = color(hue(myColor), saturation(myColor)*1.5, brightness(myColor)*1.5);
     }
-    myPort.write('A'); //仮データ送信
+    //仮データ送信
+    myPort.write('A');
   }
 }

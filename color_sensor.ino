@@ -68,28 +68,29 @@ void loop() {
   uint16_t clear, red, green, blue;
   tcs.setInterrupt(false);
   delay(60);
-  tcs.getRawData(&red, &green, &blue, &clear); //カラーセンサーデータの取得
+  
+  //カラーセンサーデータの取得
+  tcs.getRawData(&red, &green, &blue, &clear);
   tcs.setInterrupt(true);
 
-  //RGBを256段階で表示
+  //色情報の正規化
   uint32_t sum = clear;
   float r, g, b;
   r = red; r /= sum;
-  g = green; g /=sum;
-  b = blue; b/=sum;
+  g = green; g /= sum;
+  b = blue; b /= sum;
   r *= 256; g *= 256; b *= 256; 
 
-  //CMYKへの変換
-  float c, m, y, k, sum2;
-  sum2= 256 - r;
-  if(sum2 > 256 - g) sum2 = 256 - g;
-  if(sum2 > 256 - b) sum2 = 256 - b;
+  //CMYKへの変換，変換式のまま（100を掛けているのは％表示にするため）
+  float c, m, y, k;
+  k = 256 - r;
+  if(k > 256 - g) k = 256 - g;
+  if(k > 256 - b) k = 256 - b;
 
-  k=sum2;
   c = (256 - k - r); c /= 256-k; c *= 100;
   m = (256 - k - g); m /= 256-k; m *= 100;
   y = (256 - k - b); y /= 256-k; y *= 100;
-  k = sum2; k /= 256; k *= 100;
+  k /= 256; k *= 100;
   
   //シリアルモニターへ表示
   Serial.print("R:\t"); Serial.print((int)r);
@@ -113,7 +114,7 @@ void loop() {
   //analogWrite(greenpin, gammatable[(int)g]);
   //analogWrite(bluepin, gammatable[(int)b]);
 
-  //ボタン状態でStateを変更
+  //ボタンを押すと指定したStateに移る
   if(buttonState1 == HIGH){
     State = 1;
     delay(500);
@@ -127,27 +128,29 @@ void loop() {
     delay(500);
   }
 
-  //State1　Processingとの通信
+  //State1になっている間，Proessingとの通信を行う
   if(State == 1){
-    analogWrite(redpin, 255); //LED赤色発光
+    analogWrite(redpin, 255);
     if(Serial.available() > 0) {
-      Serial.read(); //Processingから仮データを受け取る
-      Serial.println(String((int)r) + "," + String((int)g) + "," + String((int)b)); //ProcessingにRGBデータを送信
+      Serial.read();
+      //RGB値の送信
+      Serial.println(String((int)r) + "," + String((int)g) + "," + String((int)b));
     }
   }else{
     analogWrite(redpin, 0);
   }
 
-  //State2 全てのモーターを「水が流れる角度」に設定
+  //State2の間，全てのモータが絵の具が流れる位置に回転する
   if(State == 2){
-    analogWrite(greenpin, 255); //LED緑色発光
-    
-    Servocyan.write(10);
+    analogWrite(greenpin, 255);
+
+    Servocyan.write(10);  //各モータの絵の具を流す角度は実際にやってみて調節
     Servomagenta.write(20);
     Servoyellow.write(170);
-    Servoblack.write(160);
-    delay(1000); //１秒待機
+    Servoblack.write(150);
+    delay(1000);
   }else{
+    //State2以外のときは全て絵の具を流さない
     Servocyan.write(180);
     Servomagenta.write(180);
     Servoyellow.write(0);
@@ -155,36 +158,36 @@ void loop() {
     analogWrite(greenpin, 0);
   }
 
-  //State3　色生成
+  //State3のとき，各モータが指定した時間だけ絵の具を流す
   if(State == 3){
-    analogWrite(bluepin, 255); //LED青色発光
-    
-    Servocyan.write(10); //「水が流れる角度」に回転
+    analogWrite(bluepin, 255);
+
+    Servocyan.write(40);  //絵の具を流す回転位置
     if(c != 0) delay(100);
-    delay(c*40); //C値*40(ms)待機
-    Servocyan.write(180); //「水が流れない角度」に戻る
+    delay(c*40);  //cがシアンの値(量の調整のため40倍している)
+    Servocyan.write(180);  //絵の具を流さない回転位置
     delay(1000);
-    
+
+    //他の色も同様
     Servomagenta.write(20);
     if(m !=0) delay(100);
     delay(m*40);
     Servomagenta.write(180);
     delay(1000);
-    
+
     Servoyellow.write(170);
     if(y !=0) delay(100);
     delay(y*40);
     Servoyellow.write(0);
     delay(1000);
-    
-    Servoblack.write(160);
-    if(k !=0) delay(100);
-    delay(k*10);//インクの濃さに応じて割合は調整する
-    Servoblack.write(0);
-    
-    State = 0; //State=0に戻る
 
+    Servoblack.write(150);
+    if(k !=0) delay(100);
+    delay(k*20);
+    Servoblack.write(-10);
+    State = 0;
   }else{
+    //State3以外のときは全て絵の具を流さない
     Servocyan.write(180);
     Servomagenta.write(180);
     Servoyellow.write(0);
