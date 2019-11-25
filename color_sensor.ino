@@ -130,7 +130,7 @@ void loop() {
 
   //State1になっている間，Proessingとの通信を行う
   if(State == 1){
-    analogWrite(redpin, 255);
+    analogWrite(redpin, 255);  // 赤色LEDの点灯
     if(Serial.available() > 0) {
       Serial.read();
       //RGB値の送信
@@ -142,7 +142,7 @@ void loop() {
 
   //State2の間，全てのモータが絵の具が流れる位置に回転する
   if(State == 2){
-    analogWrite(greenpin, 255);
+    analogWrite(greenpin, 255);  // 緑色LEDの点灯
 
     Servocyan.write(10);  //各モータの絵の具を流す角度は実際にやってみて調節
     Servomagenta.write(20);
@@ -160,7 +160,7 @@ void loop() {
 
   //State3のとき，各モータが指定した時間だけ絵の具を流す
   if(State == 3){
-    analogWrite(bluepin, 255);
+    analogWrite(bluepin, 255);  // 青色LEDの点灯
 
     Servocyan.write(40);  //絵の具を流す回転位置
     if(c != 0) delay(100);
